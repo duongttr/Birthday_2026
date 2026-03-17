@@ -42,30 +42,20 @@ const waitForBackgroundMusic = (timeoutMs = 15000) => {
   });
 };
 
-const setupBackgroundMusic = () => {
-  const bgMusic = document.getElementById("bgMusic");
-
-  if (!bgMusic) {
-    return;
+const showStartOverlay = () => {
+  const overlay = document.getElementById("startOverlay");
+  if (overlay) {
+    overlay.style.display = "flex";
+    overlay.setAttribute("aria-hidden", "false");
   }
+};
 
-  bgMusic.volume = 0.35;
-
-  const unlockAudio = () => {
-    bgMusic
-      .play()
-      .then(() => {
-        document.removeEventListener("click", unlockAudio);
-        document.removeEventListener("touchstart", unlockAudio);
-        document.removeEventListener("keydown", unlockAudio);
-      })
-      .catch(() => {});
-  };
-
-  unlockAudio();
-  document.addEventListener("click", unlockAudio);
-  document.addEventListener("touchstart", unlockAudio);
-  document.addEventListener("keydown", unlockAudio);
+const hideStartOverlay = () => {
+  const overlay = document.getElementById("startOverlay");
+  if (overlay) {
+    overlay.style.display = "none";
+    overlay.setAttribute("aria-hidden", "true");
+  }
 };
 
 // Animation Timeline
@@ -375,8 +365,50 @@ const resolveFetch = () => {
 const init = async () => {
   await resolveFetch();
   await waitForBackgroundMusic();
-  setupBackgroundMusic();
-  animationTimeline();
+
+  const bgMusic = document.getElementById("bgMusic");
+  let hasStarted = false;
+
+  const startExperience = () => {
+    if (hasStarted) {
+      return;
+    }
+    hasStarted = true;
+    hideStartOverlay();
+    animationTimeline();
+  };
+
+  if (!bgMusic) {
+    startExperience();
+    return;
+  }
+
+  bgMusic.volume = 0.35;
+
+  try {
+    await bgMusic.play();
+    startExperience();
+  } catch (error) {
+    showStartOverlay();
+    const startButton = document.getElementById("startButton");
+
+    if (startButton) {
+      startButton.addEventListener(
+        "click",
+        async () => {
+          try {
+            await bgMusic.play();
+          } catch (playError) {
+            // Continue even if play fails to avoid blocking the experience.
+          }
+          startExperience();
+        },
+        { once: true }
+      );
+    } else {
+      startExperience();
+    }
+  }
 };
 
 init();
