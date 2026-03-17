@@ -1,3 +1,47 @@
+const waitForBackgroundMusic = (timeoutMs = 15000) => {
+  const bgMusic = document.getElementById("bgMusic");
+
+  if (!bgMusic) {
+    return Promise.resolve();
+  }
+
+  if (bgMusic.readyState >= 4) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    let settled = false;
+
+    const cleanup = () => {
+      bgMusic.removeEventListener("canplaythrough", onReady);
+      bgMusic.removeEventListener("error", onError);
+    };
+
+    const done = () => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
+      resolve();
+    };
+
+    const onReady = () => {
+      done();
+    };
+
+    const onError = () => {
+      done();
+    };
+
+    bgMusic.addEventListener("canplaythrough", onReady, { once: true });
+    bgMusic.addEventListener("error", onError, { once: true });
+
+    setTimeout(done, timeoutMs);
+    bgMusic.load();
+  });
+};
+
 const setupBackgroundMusic = () => {
   const bgMusic = document.getElementById("bgMusic");
 
@@ -322,11 +366,17 @@ const fetchData = () => {
 
 // Run fetch and animation in sequence
 const resolveFetch = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     fetchData();
     resolve("Fetch done!");
   });
 };
 
-resolveFetch().then(animationTimeline());
-setupBackgroundMusic();
+const init = async () => {
+  await resolveFetch();
+  await waitForBackgroundMusic();
+  setupBackgroundMusic();
+  animationTimeline();
+};
+
+init();
