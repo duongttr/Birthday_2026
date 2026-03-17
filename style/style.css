@@ -2,6 +2,19 @@ html {
   box-sizing: border-box;
 }
 
+.birthstone-regular {
+  font-family: "Birthstone", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.dancing-script-main {
+  font-family: "Dancing Script", cursive;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   font-family: "Work Sans", sans-serif;
@@ -39,6 +52,10 @@ body {
 
 .one {
   font-size: 4.5rem;
+}
+
+#name {
+  color: #ff4d8d;
 }
 
 .one > img {

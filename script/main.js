@@ -1,3 +1,29 @@
+const setupBackgroundMusic = () => {
+  const bgMusic = document.getElementById("bgMusic");
+
+  if (!bgMusic) {
+    return;
+  }
+
+  bgMusic.volume = 0.35;
+
+  const unlockAudio = () => {
+    bgMusic
+      .play()
+      .then(() => {
+        document.removeEventListener("click", unlockAudio);
+        document.removeEventListener("touchstart", unlockAudio);
+        document.removeEventListener("keydown", unlockAudio);
+      })
+      .catch(() => {});
+  };
+
+  unlockAudio();
+  document.addEventListener("click", unlockAudio);
+  document.addEventListener("touchstart", unlockAudio);
+  document.addEventListener("keydown", unlockAudio);
+};
+
 // Animation Timeline
 const animationTimeline = () => {
   // Spit chars that needs to be animated individually
@@ -46,7 +72,7 @@ const animationTimeline = () => {
         opacity: 0,
         y: 10,
       },
-      "+=2.5"
+      "+=5"
     )
     .to(
       ".two",
@@ -55,7 +81,7 @@ const animationTimeline = () => {
         opacity: 0,
         y: 10,
       },
-      "-=1"
+      "+=2"
     )
     .from(".three", 0.7, {
       opacity: 0,
@@ -69,7 +95,7 @@ const animationTimeline = () => {
         opacity: 0,
         y: 10,
       },
-      "+=2"
+      "+=5"
     )
     .from(".four", 0.7, {
       scale: 0.2,
@@ -98,12 +124,12 @@ const animationTimeline = () => {
         opacity: 0,
         y: -150,
       },
-      "+=0.7"
+      "+=1"
     )
     .from(".idea-1", 0.7, ideaTextTrans)
-    .to(".idea-1", 0.7, ideaTextTransLeave, "+=1.5")
+    .to(".idea-1", 0.7, ideaTextTransLeave, "+=4")
     .from(".idea-2", 0.7, ideaTextTrans)
-    .to(".idea-2", 0.7, ideaTextTransLeave, "+=1.5")
+    .to(".idea-2", 0.7, ideaTextTransLeave, "+=4")
     .from(".idea-3", 0.7, ideaTextTrans)
     .to(".idea-3 strong", 0.5, {
       scale: 1.2,
@@ -111,9 +137,9 @@ const animationTimeline = () => {
       backgroundColor: "rgb(21, 161, 237)",
       color: "#fff",
     })
-    .to(".idea-3", 0.7, ideaTextTransLeave, "+=1.5")
+    .to(".idea-3", 0.7, ideaTextTransLeave, "+=3")
     .from(".idea-4", 0.7, ideaTextTrans)
-    .to(".idea-4", 0.7, ideaTextTransLeave, "+=1.5")
+    .to(".idea-4", 0.7, ideaTextTransLeave, "+=3")
     .from(
       ".idea-5",
       0.7,
@@ -125,7 +151,7 @@ const animationTimeline = () => {
         z: 10,
         opacity: 0,
       },
-      "+=0.5"
+      "+=2"
     )
     .to(
       ".idea-5 span",
@@ -134,7 +160,7 @@ const animationTimeline = () => {
         rotation: 90,
         x: 8,
       },
-      "+=0.4"
+      "+=3"
     )
     .to(
       ".idea-5",
@@ -143,7 +169,7 @@ const animationTimeline = () => {
         scale: 0.2,
         opacity: 0,
       },
-      "+=2"
+      "+=4"
     )
     .staggerFrom(
       ".idea-6 span",
@@ -166,7 +192,7 @@ const animationTimeline = () => {
         ease: Expo.easeOut,
       },
       0.2,
-      "+=1"
+      "+=3"
     )
     .staggerFromTo(
       ".baloons img",
@@ -262,7 +288,7 @@ const animationTimeline = () => {
       {
         rotation: 90,
       },
-      "+=1"
+      "+=20"
     );
 
   // tl.seek("currentStep");
@@ -303,3 +329,4 @@ const resolveFetch = () => {
 };
 
 resolveFetch().then(animationTimeline());
+setupBackgroundMusic();
